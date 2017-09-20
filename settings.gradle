@@ -1,0 +1,3 @@
+rootProject.name = 'dependencies'
+include ':client-one', ':client-two', ':client-three'
+
