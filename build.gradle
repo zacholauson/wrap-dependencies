@@ -6,8 +6,10 @@ mainClassName = 'com.example.dependencies.App'
 
 defaultTasks 'clean', 'run'
 
+def clientVersion = 1
+
 dependencies {
-    compile project(':client-one')
+    compile project(":client-v${clientVersion}")
 }
 
 allprojects {
