@@ -2,6 +2,7 @@ package com.example.client;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,10 @@ public class Client {
 
       return storyIds;
     });
+
+    try {
+      Thread.sleep(Duration.ofSeconds(5).toMillis());
+    } catch (InterruptedException ignored) { }
 
     return newStoryId;
   }
