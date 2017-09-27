@@ -1,9 +1,12 @@
 package com.example.dependencies;
 
+import com.example.client.Author;
 import com.example.client.Client;
+import com.google.common.collect.ImmutableList;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,43 +22,45 @@ public class App {
   }
 
   private static void addStories() {
-    Client.getInstance()
-        .addStory(
-            "www.paper-monthly.com",
-            "Top Salesman",
-            "Jan",
-            "Gould",
-            "Nashua, NH",
-            "Some people will tell you salesman is a bad word. They'll conjure up images of used car " +
-                "dealers and door to door charlatans. This is our duty: to change their perception.",
-            new String[] { "salesman", "salesman of the year", "history" },
-            Instant.now());
+    Client client = Client.getInstance();
 
-    Client.getInstance()
-        .addStory(
-            "www.paper-monthly.com",
-            "Dunder Mifflin Infinity",
-            "Creed",
-            "Bratton",
-            "Scranton, PA",
-            "It's like Facebook, but full of paper salesmen.",
-            new String[] { "salesman", "social network", "paper", "2.0" },
-            Instant.now());
+    String firstStoryId = client.initializeNewStory("www.paper-monthly.com");
+    client.addStoryInformation(firstStoryId,
+        "Top Salesman",
+        "Some people will tell you salesman is a bad word. They'll conjure up images of used car " +
+            "dealers and door to door charlatans. This is our duty: to change their perception.",
+        ImmutableList.of("salesman", "salesman of the year", "history"));
+    client.addAuthorInformation(firstStoryId,
+        "Jan",
+        "Gould",
+        "Nashua, NH");
+    client.publishStory(firstStoryId);
+
+    String secondStoryId = client.initializeNewStory("www.paper-monthly.com");
+    client.addStoryInformation(secondStoryId,
+        "Dunder Mifflin Infinity",
+        "It's like Facebook, but full of paper salesmen.",
+        ImmutableList.of("salesman", "social network", "paper", "2.0"));
+    client.addAuthorInformation(secondStoryId,
+        "Creed",
+        "Bratton",
+        "Scranton, PA");
+    client.publishStory(secondStoryId);
   }
 
   private static void printStories() {
-    Client.getInstance().getStories().forEach((siteName, stories) -> {
+    Client.getInstance().stories().forEach((siteName, stories) -> {
       printHeader(siteName);
       printSeparator();
 
       stories.forEach(story -> {
-        String title = (String) story.get("title");
-        Map<String, String> author = (Map<String, String>) story.get("author");
-        String body = (String) story.get("body");
-        String[] tags = (String[]) story.get("tags");
-        Instant publishTime = (Instant) story.get("publishTime");
+        String title = story.title();
+        Author author = story.author();
+        String body = story.body();
+        List<String> tags = story.tags();
+        Instant publishTime = story.publishedAt();
 
-        printStory(title, author.get("firstName"), author.get("lastName"), body, tags, publishTime);
+        printStory(title, author.firstName(), author.lastName(), body, tags, publishTime);
         printSeparator();
       });
     });
@@ -70,9 +75,9 @@ public class App {
     System.out.format(BODY_FORMAT, "--------------------------------------------------------------------------------");
   }
 
-  private static void printStory(String title, String authorFirstName, String authorLastName, String body, String[] tags, Instant publishTime) {
+  private static void printStory(String title, String authorFirstName, String authorLastName, String body, List<String> tags, Instant publishTime) {
     System.out.format(HEADER_FORMAT, title, authorFirstName + " " + authorLastName, publishTime);
     System.out.format(BODY_FORMAT, body.substring(0, Math.min(body.length(), 75)) + "....");
-    System.out.format(BODY_FORMAT, "Tags: " + Arrays.stream(tags).collect(Collectors.joining(", ")));
+    System.out.format(BODY_FORMAT, "Tags: " + tags.stream().collect(Collectors.joining(", ")));
   }
 }

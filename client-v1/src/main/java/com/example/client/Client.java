@@ -4,9 +4,14 @@ import com.google.common.collect.ImmutableMap;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Client {
 
@@ -20,39 +25,102 @@ public class Client {
     return instance;
   }
 
-  private Map<String, LinkedList<Map<String, Object>>> storiesBySite;
+  private Map<String, Map<String, Map<String, Object>>> storiesBySite;
+  private Map<String, Set<String>> siteStoryIds;
 
   private Client() {
     this.storiesBySite = new HashMap<>();
+    this.siteStoryIds = new HashMap<>();
   }
 
-  public void addStory(String websiteName, String title, String authorFirstName, String authorLastName, String authorLocation, String body, String[] tags, Instant publishTime) {
-    storiesBySite.compute(websiteName, (siteName, stories) -> {
-      if (stories == null) {
-        stories = new LinkedList<>();
-      }
+  public String initializeNewStory(String websiteName) {
+    String newStoryId = UUID.randomUUID().toString();
 
-      stories.addLast(ImmutableMap.of(
-          "title", title,
-          "author", ImmutableMap.of(
-              "firstName", authorFirstName,
-              "lastName", authorLastName,
-              "location", authorLocation),
-          "body", body,
-          "tags", tags,
-          "publishTime", publishTime));
+    siteStoryIds.compute(websiteName, (siteName, storyIds) -> {
+      storyIds = Optional.ofNullable(storyIds)
+          .orElse(new HashSet<>());
+
+      storyIds.add(newStoryId);
+
+      return storyIds;
+    });
+
+    return newStoryId;
+  }
+
+  public void addAuthorInformation(String storyId, String authorFirstName, String authorLastName, String authorLocation) {
+    updateStory(storyId, story -> story.put(
+        "author", ImmutableMap.of(
+            "firstName", authorFirstName,
+            "lastName", authorLastName,
+            "location", authorLocation)));
+  }
+
+  public void addStoryInformation(String storyId, String title, String body, List<String> tags) {
+    updateStory(storyId, story -> story.putAll(
+        ImmutableMap.of(
+            "title", title,
+            "body", body,
+            "tags", tags)));
+  }
+
+  public void publishStory(String storyId) {
+    updateStory(storyId, story -> story.put(
+        "publishedAt", Instant.now()));
+  }
+
+  public Map<String, List<Story>> stories() {
+    return storiesBySite.entrySet().stream()
+        .collect(Collectors.toMap(
+            Map.Entry::getKey,
+            entry -> entry.getValue().entrySet().stream()
+                .map(e -> Story.builder()
+                    .id(e.getKey())
+                    .title(getStoryAttribute(e, "title"))
+                    .author(Author.builder()
+                        .firstName(getAuthorAttribute(e, "firstName"))
+                        .lastName(getAuthorAttribute(e, "lastName"))
+                        .location(getAuthorAttribute(e, "location"))
+                        .build())
+                    .body(getStoryAttribute(e, "body"))
+                    .tags(getStoryAttribute(e, "tags"))
+                    .publishedAt(getStoryAttribute(e, "publishedAt"))
+                    .build())
+                .collect(Collectors.toList())));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> T getStoryAttribute(Map.Entry<String, Map<String, Object>> storyEntry, String attributeName) {
+    return (T) storyEntry.getValue().get(attributeName);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> T getAuthorAttribute(Map.Entry<String, Map<String, Object>> storyEntry, String attributeName) {
+    return (T) ((Map<String, Object>) storyEntry.getValue().get("author")).get(attributeName);
+  }
+
+  private void updateStory(String storyId, Consumer<Map<String, Object>> storyUpdater) {
+    storiesBySite.compute(websiteNameByStoryId(storyId), (siteName, stories) -> {
+      stories = Optional.ofNullable(stories)
+          .orElse(new HashMap<>());
+
+      stories.compute(storyId, (sid, story) -> {
+        story = Optional.ofNullable(story)
+            .orElse(new HashMap<>());
+
+        storyUpdater.accept(story);
+
+        return story;
+      });
 
       return stories;
     });
   }
 
-  public Map<String, LinkedList<Map<String, Object>>> getStories() {
-    return storiesBySite;
-  }
-
-  public Map<String, Object> getLatestStory(String websiteName) {
-    return Optional.ofNullable(storiesBySite.get(websiteName))
-        .map(LinkedList::peekFirst)
-        .orElse(null);
+  private String websiteNameByStoryId(String storyId) {
+    return siteStoryIds.entrySet().stream()
+        .filter(entry -> entry.getValue().contains(storyId))
+        .map(Map.Entry::getKey)
+        .findFirst().orElseThrow(() -> new RuntimeException("Story not initialized for: " + storyId));
   }
 }
