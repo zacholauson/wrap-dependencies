@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Story {
 
-  public static Builder builder() {
+  static Builder builder() {
     return new Builder();
   }
 
@@ -49,7 +49,7 @@ public class Story {
     this.publishedAt = publishedAt;
   }
 
-  public static class Builder {
+  static class Builder {
 
     private String id;
     private String title;
@@ -61,37 +61,37 @@ public class Story {
     private Builder() {
     }
 
-    public Builder id(String id) {
+    Builder id(String id) {
       this.id = id;
       return this;
     }
 
-    public Builder title(String title) {
+    Builder title(String title) {
       this.title = title;
       return this;
     }
 
-    public Builder author(Author author) {
+    Builder author(Author author) {
       this.author = author;
       return this;
     }
 
-    public Builder body(String body) {
+    Builder body(String body) {
       this.body = body;
       return this;
     }
 
-    public Builder tags(List<String> tags) {
+    Builder tags(List<String> tags) {
       this.tags = tags;
       return this;
     }
 
-    public Builder publishedAt(Instant publishedAt) {
+    Builder publishedAt(Instant publishedAt) {
       this.publishedAt = publishedAt;
       return this;
     }
 
-    public Story build() {
+    Story build() {
       return new Story(id, title, author, body, tags, publishedAt);
     }
   }

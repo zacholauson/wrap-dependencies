@@ -32,8 +32,7 @@ public class App {
         ImmutableList.of("salesman", "salesman of the year", "history"));
     client.addAuthorInformation(firstStoryId,
         "Jan",
-        "Gould",
-        "Nashua, NH");
+        "Gould");
     client.publishStory(firstStoryId);
 
     String secondStoryId = client.initializeNewStory("www.paper-monthly.com");
@@ -43,8 +42,7 @@ public class App {
         ImmutableList.of("salesman", "social network", "paper", "2.0"));
     client.addAuthorInformation(secondStoryId,
         "Creed",
-        "Bratton",
-        "Scranton, PA");
+        "Bratton");
     client.publishStory(secondStoryId);
   }
 

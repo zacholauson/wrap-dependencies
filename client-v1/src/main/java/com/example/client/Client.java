@@ -53,12 +53,11 @@ public class Client {
     return newStoryId;
   }
 
-  public void addAuthorInformation(String storyId, String authorFirstName, String authorLastName, String authorLocation) {
+  public void addAuthorInformation(String storyId, String authorFirstName, String authorLastName) {
     updateStory(storyId, story -> story.put(
         "author", ImmutableMap.of(
             "firstName", authorFirstName,
-            "lastName", authorLastName,
-            "location", authorLocation)));
+            "lastName", authorLastName)));
   }
 
   public void addStoryInformation(String storyId, String title, String body, List<String> tags) {
@@ -85,7 +84,6 @@ public class Client {
                     .author(Author.builder()
                         .firstName(getAuthorAttribute(e, "firstName"))
                         .lastName(getAuthorAttribute(e, "lastName"))
-                        .location(getAuthorAttribute(e, "location"))
                         .build())
                     .body(getStoryAttribute(e, "body"))
                     .tags(getStoryAttribute(e, "tags"))
