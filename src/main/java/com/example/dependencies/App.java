@@ -5,25 +5,26 @@ import com.example.client.Client;
 import com.google.common.collect.ImmutableList;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class App {
 
-  private static final String HEADER_FORMAT = "| %1$-30s | %2$-20s | %3$-24s |\n";
-  private static final String BODY_FORMAT = "| %1$-80s |\n";
-  private static final String SITE_NAME_HEADER_FORMAT = "| SITE: %1$-74s |\n";
-
   public static void main(final String[] args) {
-    addStories();
-    printStories();
+    App app = new App(Client.getInstance(), new Terminal());
+
+    app.addStories();
+    app.printStories();
   }
 
-  private static void addStories() {
-    Client client = Client.getInstance();
+  private final Client client;
+  private final Terminal terminal;
 
+  public App(Client client, Terminal terminal) {
+    this.client = client;
+    this.terminal = terminal;
+  }
+
+  private void addStories() {
     String firstStoryId = client.initializeNewStory("www.paper-monthly.com");
     client.addStoryInformation(firstStoryId,
         "Top Salesman",
@@ -46,10 +47,10 @@ public class App {
     client.publishStory(secondStoryId);
   }
 
-  private static void printStories() {
-    Client.getInstance().stories().forEach((siteName, stories) -> {
-      printHeader(siteName);
-      printSeparator();
+  private void printStories() {
+    client.stories().forEach((siteName, stories) -> {
+      terminal.printHeader(siteName);
+      terminal.printSeparator();
 
       stories.forEach(story -> {
         String title = story.title();
@@ -58,24 +59,9 @@ public class App {
         List<String> tags = story.tags();
         Instant publishTime = story.publishedAt();
 
-        printStory(title, author.firstName(), author.lastName(), body, tags, publishTime);
-        printSeparator();
+        terminal.printStory(title, author.firstName(), author.lastName(), body, tags, publishTime);
+        terminal.printSeparator();
       });
     });
-  }
-
-  private static void printHeader(String siteName) {
-    System.out.format(SITE_NAME_HEADER_FORMAT, siteName);
-    System.out.format(HEADER_FORMAT, "TITLE", "AUTHOR", "PUBLISH DATE");
-  }
-
-  private static void printSeparator() {
-    System.out.format(BODY_FORMAT, "--------------------------------------------------------------------------------");
-  }
-
-  private static void printStory(String title, String authorFirstName, String authorLastName, String body, List<String> tags, Instant publishTime) {
-    System.out.format(HEADER_FORMAT, title, authorFirstName + " " + authorLastName, publishTime);
-    System.out.format(BODY_FORMAT, body.substring(0, Math.min(body.length(), 75)) + "....");
-    System.out.format(BODY_FORMAT, "Tags: " + tags.stream().collect(Collectors.joining(", ")));
   }
 }
