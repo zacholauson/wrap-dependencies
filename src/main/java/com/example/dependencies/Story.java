@@ -2,11 +2,12 @@ package com.example.dependencies;
 
 import com.google.common.collect.Lists;
 
+import java.time.Instant;
 import java.util.List;
 
 public class Story {
 
-  static Builder builder() {
+  public static Builder builder() {
     return new Builder();
   }
 
@@ -14,6 +15,7 @@ public class Story {
   private final Author author;
   private final String body;
   private final List<String> tags;
+  private final Instant publishedAt;
 
   public String title() {
     return title;
@@ -31,45 +33,56 @@ public class Story {
     return tags;
   }
 
-  private Story(String title, Author author, String body, List<String> tags) {
+  public Instant publishedAt() {
+    return publishedAt;
+  }
+
+  private Story(String title, Author author, String body, List<String> tags, Instant publishedAt) {
     this.title = title;
     this.author = author;
     this.body = body;
     this.tags = tags;
+    this.publishedAt = publishedAt;
   }
 
-  static class Builder {
+  public static class Builder {
 
     private String title;
     private Author author;
     private String body;
     private List<String> tags;
+    private Instant publishTime;
 
     private Builder() {
     }
 
-    Builder withTitle(String title) {
+    public Builder withTitle(String title) {
       this.title = title;
       return this;
     }
 
-    Builder withAuthor(Author author) {
+    public Builder withAuthor(Author author) {
       this.author = author;
       return this;
     }
 
-    Builder withBody(String body) {
+    public Builder withBody(String body) {
       this.body = body;
       return this;
     }
 
-    Builder withTags(String... tags) {
+    public Builder withTags(String... tags) {
       this.tags = Lists.newArrayList(tags);
       return this;
     }
 
+    public Builder withPublishTime(Instant publishTime) {
+      this.publishTime = publishTime;
+      return this;
+    }
+
     Story build() {
-      return new Story(title, author, body, tags);
+      return new Story(title, author, body, tags, publishTime);
     }
   }
 }
