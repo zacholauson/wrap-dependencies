@@ -1,3 +1,3 @@
 rootProject.name = 'dependencies'
-include ':client-v1', ':client-v2', ':client-v3'
+include ':client-v1'
 
