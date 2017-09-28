@@ -3,7 +3,7 @@ package com.example.client;
 import java.time.Instant;
 import java.util.List;
 
-public class Story {
+public class ClientStory {
 
   static Builder builder() {
     return new Builder();
@@ -11,7 +11,7 @@ public class Story {
 
   private final String id;
   private final String title;
-  private final Author author;
+  private final ClientAuthor author;
   private final String body;
   private final List<String> tags;
   private final Instant publishedAt;
@@ -24,7 +24,7 @@ public class Story {
     return title;
   }
 
-  public Author author() {
+  public ClientAuthor author() {
     return author;
   }
 
@@ -40,7 +40,7 @@ public class Story {
     return publishedAt;
   }
 
-  private Story(String id, String title, Author author, String body, List<String> tags, Instant publishedAt) {
+  private ClientStory(String id, String title, ClientAuthor author, String body, List<String> tags, Instant publishedAt) {
     this.id = id;
     this.title = title;
     this.author = author;
@@ -53,7 +53,7 @@ public class Story {
 
     private String id;
     private String title;
-    private Author author;
+    private ClientAuthor author;
     private String body;
     private List<String> tags;
     private Instant publishedAt;
@@ -71,7 +71,7 @@ public class Story {
       return this;
     }
 
-    Builder author(Author author) {
+    Builder author(ClientAuthor author) {
       this.author = author;
       return this;
     }
@@ -91,8 +91,8 @@ public class Story {
       return this;
     }
 
-    Story build() {
-      return new Story(id, title, author, body, tags, publishedAt);
+    ClientStory build() {
+      return new ClientStory(id, title, author, body, tags, publishedAt);
     }
   }
 }

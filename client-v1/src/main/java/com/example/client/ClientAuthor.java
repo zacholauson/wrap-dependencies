@@ -1,6 +1,6 @@
 package com.example.client;
 
-public class Author {
+public class ClientAuthor {
 
   static Builder builder() {
     return new Builder();
@@ -9,7 +9,7 @@ public class Author {
   private final String firstName;
   private final String lastName;
 
-  private Author(String firstName, String lastName) {
+  private ClientAuthor(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
   }
@@ -39,8 +39,8 @@ public class Author {
       return this;
     }
 
-    Author build() {
-      return new Author(firstName, lastName);
+    ClientAuthor build() {
+      return new ClientAuthor(firstName, lastName);
     }
   }
 }

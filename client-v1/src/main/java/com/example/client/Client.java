@@ -73,15 +73,15 @@ public class Client {
         "publishedAt", Instant.now()));
   }
 
-  public Map<String, List<Story>> stories() {
+  public Map<String, List<ClientStory>> stories() {
     return storiesBySite.entrySet().stream()
         .collect(Collectors.toMap(
             Map.Entry::getKey,
             entry -> entry.getValue().entrySet().stream()
-                .map(e -> Story.builder()
+                .map(e -> ClientStory.builder()
                     .id(e.getKey())
                     .title(getStoryAttribute(e, "title"))
-                    .author(Author.builder()
+                    .author(ClientAuthor.builder()
                         .firstName(getAuthorAttribute(e, "firstName"))
                         .lastName(getAuthorAttribute(e, "lastName"))
                         .build())
