@@ -11,7 +11,7 @@ In: `./build.gradle`, change:
 
 ```
 dependencies {
-    compile project(':client-one')
+    compile project(':client-v1')
 }
 ```
 
@@ -19,7 +19,7 @@ To:
 
 ```
 dependencies {
-    compile project(':client-two')
+    compile project(':client-v2')
 }
 ```
 
@@ -30,7 +30,7 @@ In: `./build.gradle`, change:
 
 ```
 dependencies {
-    compile project(':client-two')
+    compile project(':client-v2')
 }
 ```
 
@@ -38,6 +38,6 @@ To:
 
 ```
 dependencies {
-    compile project(':client-three')
+    compile project(':client-v3')
 }
 ```

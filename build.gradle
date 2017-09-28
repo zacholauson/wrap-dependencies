@@ -7,7 +7,7 @@ mainClassName = 'com.example.dependencies.App'
 defaultTasks 'clean', 'run'
 
 dependencies {
-    compile project(':client-one')
+    compile project(':client-v1')
 }
 
 allprojects {
